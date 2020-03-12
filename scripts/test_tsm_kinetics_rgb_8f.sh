@@ -13,3 +13,10 @@ python test_models.py kinetics \
     --weights=pretrained/TSM_kinetics_RGB_resnet50_shift8_blockres_avg_segment8_e50.pth \
     --test_segments=8 --test_crops=1 \
     --batch_size=64
+
+# test our trained model
+python test_models.py ucf101 \
+    --weights=checkpoint/TSM_ucf101_RGB_resnet50_shift8_blockres_avg_segment8_e25/ckpt.best.pth.tar \
+    --test_segments=8 --test_crops=1 \
+    --batch_size=32
+

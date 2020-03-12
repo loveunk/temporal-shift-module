@@ -5,7 +5,7 @@
 
 import os
 
-ROOT_DATASET = './data/'  # '/data/jilin/'
+ROOT_DATASET = './data/'
 
 
 def return_ucf101(modality):
@@ -28,12 +28,12 @@ def return_ucf101(modality):
 def return_hmdb51(modality):
     filename_categories = 51
     if modality == 'RGB':
-        root_data = ROOT_DATASET + 'hmdb51/images'
+        root_data = ROOT_DATASET + 'hmdb51/rawframes'
         filename_imglist_train = 'hmdb51/hmdb51_train_split_1_rawframes.txt'
         filename_imglist_val = 'hmdb51/hmdb51_val_split_1_rawframes.txt'
         prefix = 'img_{:05d}.jpg'
     elif modality == 'Flow':
-        root_data = ROOT_DATASET + 'hmdb51/images'
+        root_data = ROOT_DATASET + 'hmdb51/rawframes'
         filename_imglist_train = 'hmdb51/hmdb51_train_split_1_rawframes.txt'
         filename_imglist_val = 'hmdb51/hmdb51_val_split_1_rawframes.txt'
         prefix = 'flow_{}_{:05d}.jpg'
