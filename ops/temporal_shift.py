@@ -29,12 +29,12 @@ class TemporalShift(nn.Module):
         n_batch = nt // n_segment
         x = x.view(n_batch, n_segment, c, h, w)
 
-        fold = c // fold_div
+        fold = c // fold_div  # by default, fold_div is 8
         if inplace:
             # Due to some out of order error when performing parallel computing. 
             # May need to write a CUDA kernel.
-            raise NotImplementedError  
-            # out = InplaceShift.apply(x, fold)
+            # raise NotImplementedError  
+            out = InplaceShift.apply(x, fold)
         else:
             out = torch.zeros_like(x)
             out[:, :-1, :fold] = x[:, 1:, :fold]  # shift left
@@ -52,12 +52,12 @@ class InplaceShift(torch.autograd.Function):
         # input = input.detach_()
         ctx.fold_ = fold
         n, t, c, h, w = input.size()
-        buffer = input.data.new(n, t, fold, h, w).zero_()
-        buffer[:, :-1] = input.data[:, 1:, :fold]
-        input.data[:, :, :fold] = buffer
-        buffer.zero_()
-        buffer[:, 1:] = input.data[:, :-1, fold: 2 * fold]
-        input.data[:, :, fold: 2 * fold] = buffer
+        buffer = input.data.new(n, t, fold, h, w).zero_()   # for only one fold
+        buffer[:, :-1] = input.data[:, 1:, :fold]           # shift one forward in t-dim
+        input.data[:, :, :fold] = buffer                    # update the 1st fold's data
+        buffer.zero_()                                      # reset buffer
+        buffer[:, 1:] = input.data[:, :-1, fold: 2 * fold]  # shift one backward in t-dim
+        input.data[:, :, fold: 2 * fold] = buffer           # update the 2nd fold's data
         return input
 
     @staticmethod
@@ -66,11 +66,11 @@ class InplaceShift(torch.autograd.Function):
         fold = ctx.fold_
         n, t, c, h, w = grad_output.size()
         buffer = grad_output.data.new(n, t, fold, h, w).zero_()
-        buffer[:, 1:] = grad_output.data[:, :-1, :fold]
+        buffer[:, 1:] = grad_output.data[:, :-1, :fold]     # shift one backward in t-dim
         grad_output.data[:, :, :fold] = buffer
         buffer.zero_()
-        buffer[:, :-1] = grad_output.data[:, 1:, fold: 2 * fold]
-        grad_output.data[:, :, fold: 2 * fold] = buffer
+        buffer[:, :-1] = grad_output.data[:, 1:, fold: 2 * fold] # shift one forward in t-dim
+        grad_output.data[:, :, fold: 2 * fold] = buffer 
         return grad_output, None
 
 
@@ -104,7 +104,7 @@ def make_temporal_shift(net, n_segment, n_div=8, place='blockres', temporal_pool
 
     import torchvision
     if isinstance(net, torchvision.models.ResNet):
-        if place == 'block':
+        if place == 'block': # inplace shift
             def make_block_temporal(stage, this_segment):
                 blocks = list(stage.children())
                 print('=> Processing stage with {} blocks'.format(len(blocks)))
@@ -117,9 +117,9 @@ def make_temporal_shift(net, n_segment, n_div=8, place='blockres', temporal_pool
             net.layer3 = make_block_temporal(net.layer3, n_segment_list[2])
             net.layer4 = make_block_temporal(net.layer4, n_segment_list[3])
 
-        elif 'blockres' in place:
+        elif 'blockres' in place: # residual shift
             n_round = 1
-            if len(list(net.layer3.children())) >= 23:
+            if len(list(net.layer3.children())) >= 23: # for resnet101 or resnet152
                 n_round = 2
                 print('=> Using n_round {} to insert temporal shift'.format(n_round))
 

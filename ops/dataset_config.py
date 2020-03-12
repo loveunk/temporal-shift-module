@@ -5,20 +5,20 @@
 
 import os
 
-ROOT_DATASET = '/ssd/video/'  # '/data/jilin/'
+ROOT_DATASET = './data/'  # '/data/jilin/'
 
 
 def return_ucf101(modality):
-    filename_categories = 'UCF101/labels/classInd.txt'
+    filename_categories = 'ucf101/annotations/classInd.txt'
     if modality == 'RGB':
-        root_data = ROOT_DATASET + 'UCF101/jpg'
-        filename_imglist_train = 'UCF101/file_list/ucf101_rgb_train_split_1.txt'
-        filename_imglist_val = 'UCF101/file_list/ucf101_rgb_val_split_1.txt'
+        root_data = ROOT_DATASET + 'ucf101/rawframes'
+        filename_imglist_train = 'ucf101/ucf101_train_split_1_rawframes.txt'
+        filename_imglist_val = 'ucf101/ucf101_val_split_1_rawframes.txt'
         prefix = 'img_{:05d}.jpg'
     elif modality == 'Flow':
-        root_data = ROOT_DATASET + 'UCF101/jpg'
-        filename_imglist_train = 'UCF101/file_list/ucf101_flow_train_split_1.txt'
-        filename_imglist_val = 'UCF101/file_list/ucf101_flow_val_split_1.txt'
+        root_data = ROOT_DATASET + 'ucf101/rawframes'
+        filename_imglist_train = 'ucf101/ucf101_train_split_1_rawframes.txt'
+        filename_imglist_val = 'ucf101/ucf101_val_split_1_rawframes.txt'
         prefix = 'flow_{}_{:05d}.jpg'
     else:
         raise NotImplementedError('no such modality:' + modality)
@@ -28,14 +28,14 @@ def return_ucf101(modality):
 def return_hmdb51(modality):
     filename_categories = 51
     if modality == 'RGB':
-        root_data = ROOT_DATASET + 'HMDB51/images'
-        filename_imglist_train = 'HMDB51/splits/hmdb51_rgb_train_split_1.txt'
-        filename_imglist_val = 'HMDB51/splits/hmdb51_rgb_val_split_1.txt'
+        root_data = ROOT_DATASET + 'hmdb51/images'
+        filename_imglist_train = 'hmdb51/hmdb51_train_split_1_rawframes.txt'
+        filename_imglist_val = 'hmdb51/hmdb51_val_split_1_rawframes.txt'
         prefix = 'img_{:05d}.jpg'
     elif modality == 'Flow':
-        root_data = ROOT_DATASET + 'HMDB51/images'
-        filename_imglist_train = 'HMDB51/splits/hmdb51_flow_train_split_1.txt'
-        filename_imglist_val = 'HMDB51/splits/hmdb51_flow_val_split_1.txt'
+        root_data = ROOT_DATASET + 'hmdb51/images'
+        filename_imglist_train = 'hmdb51/hmdb51_train_split_1_rawframes.txt'
+        filename_imglist_val = 'hmdb51/hmdb51_val_split_1_rawframes.txt'
         prefix = 'flow_{}_{:05d}.jpg'
     else:
         raise NotImplementedError('no such modality:' + modality)
