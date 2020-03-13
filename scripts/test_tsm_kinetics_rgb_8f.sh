@@ -14,9 +14,26 @@ python test_models.py kinetics \
     --test_segments=8 --test_crops=1 \
     --batch_size=64
 
-# test our trained model
+# test our trained model with ucf101 - TSM
 python test_models.py ucf101 \
     --weights=checkpoint/TSM_ucf101_RGB_resnet50_shift8_blockres_avg_segment8_e25/ckpt.best.pth.tar \
-    --test_segments=8 --test_crops=1 \
+    --test_segments=8 --test_crops=10 \
     --batch_size=32
 
+# test our trained model with ucf101 - TSM_non-local
+python test_models.py ucf101 \
+    --weights=checkpoint/TSM_ucf101_RGB_resnet50_shift8_blockres_avg_segment8_e25_nl/ckpt.best.pth.tar \
+    --test_segments=8 --test_crops=10 \
+    --batch_size=32
+
+# test our trained model with hmdb51 - TSM
+python test_models.py hmdb51 \
+    --weights=checkpoint/TSM_hmdb51_RGB_resnet50_shift8_blockres_avg_segment8_e25/ckpt.best.pth.tar \
+    --test_segments=8 --test_crops=10 \
+    --batch_size=32
+
+# test our trained model with hmdb51 - TSM_non-local
+python test_models.py hmdb51 \
+    --weights=checkpoint/TSM_hmdb51_RGB_resnet50_shift8_blockres_avg_segment8_e25_nl/ckpt.best.pth.tar \
+    --test_segments=8 --test_crops=10 \
+    --batch_size=32
